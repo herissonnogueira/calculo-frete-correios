@@ -26,10 +26,10 @@ export interface TokenResponse {
 
 export interface CalculoFreteParams {
   cepDestino: string;
-  peso: number;
-  comprimento: number;
-  largura: number;
-  altura: number;
+  peso?: number;
+  comprimento?: number;
+  largura?: number;
+  altura?: number;
   valorDeclarado?: number;
   servicos?: string[];
 }
