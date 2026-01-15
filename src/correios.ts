@@ -1,6 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
 import { CorreiosConfig, CalculoFreteParams, CalculoFreteResponse, ServicoFrete, TokenResponse } from './types';
 
+const DIMENSOES_MINIMAS = {
+  peso: 0.3,
+  comprimento: 16,
+  largura: 11,
+  altura: 2,
+};
+
 export class CorreiosClient {
   private config: CorreiosConfig;
   private apiClient: AxiosInstance;
@@ -171,6 +178,12 @@ export class CorreiosClient {
       const contrato = this.contratoDoToken || this.config.contrato;
       const dr = this.drDoToken ?? this.config.dr ?? 0;
       const servicos = params.servicos || ['03220', '03298'];
+
+      const peso = Math.max(params.peso ?? DIMENSOES_MINIMAS.peso, DIMENSOES_MINIMAS.peso);
+      const comprimento = Math.max(params.comprimento ?? DIMENSOES_MINIMAS.comprimento, DIMENSOES_MINIMAS.comprimento);
+      const largura = Math.max(params.largura ?? DIMENSOES_MINIMAS.largura, DIMENSOES_MINIMAS.largura);
+      const altura = Math.max(params.altura ?? DIMENSOES_MINIMAS.altura, DIMENSOES_MINIMAS.altura);
+
       const precoRequest = {
         idLote: '1',
         parametrosProduto: servicos.map((codigoServico) => ({
@@ -181,11 +194,11 @@ export class CorreiosClient {
           nuRequisicao: '1',
           tpObjeto: '2',
           dtEvento: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
-          altura: Math.round(params.altura).toString(),
-          largura: Math.round(params.largura).toString(),
+          altura: Math.round(altura).toString(),
+          largura: Math.round(largura).toString(),
           diametro: '0',
-          comprimento: Math.round(params.comprimento).toString(),
-          psObjeto: Math.round(params.peso * 1000).toString(),
+          comprimento: Math.round(comprimento).toString(),
+          psObjeto: Math.round(peso * 1000).toString(),
           coProduto: codigoServico,
         })),
       };

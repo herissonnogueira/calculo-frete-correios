@@ -32,27 +32,22 @@ async function main() {
     correios.validarConfiguracao();
 
     console.log('Calculando frete...');
-    console.log(`CEP origem: ${cepOrigem || 'não informado'}`);
+    console.log(`CEP origem: ${cepOrigem}`);
     console.log(`CEP destino: 01310100`);
-    console.log(`Peso: 0.5 kg`);
     console.log('');
 
-    const params: CalculoFreteParams = {
+    const resultado = await correios.calcularFrete({
       cepDestino: '01310100',
       peso: 0.5,
       comprimento: 20,
       largura: 15,
       altura: 10,
-      valorDeclarado: 100.00,
-      servicos: ['03220', '03298'],
-    };
-
-    const resultado = await correios.calcularFrete(params);
+    });
 
     console.log('Resultados:');
     resultado.servicos.forEach((servico) => {
-      if (servico.erro || servico.msgErro) {
-        console.log(`  ${servico.nome}: Erro - ${servico.msgErro || servico.erro}`);
+      if (servico.erro) {
+        console.log(`  ${servico.nome}: Erro - ${servico.erro}`);
       } else {
         console.log(`  ${servico.nome}: R$ ${servico.valor.toFixed(2)} - ${servico.prazo} dias úteis`);
       }
