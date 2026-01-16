@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { CorreiosClient } from './correios';
-import { CalculoFreteParams } from './types';
 
 dotenv.config();
 
@@ -30,6 +29,11 @@ async function main() {
     });
 
     correios.validarConfiguracao();
+
+    console.log('Verificando conexão...');
+    const status = await correios.verificarConexao();
+    console.log(`Status: ${status.conectado ? '✓' : '✗'} ${status.mensagem}`);
+    console.log('');
 
     console.log('Calculando frete...');
     console.log(`CEP origem: ${cepOrigem}`);

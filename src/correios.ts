@@ -353,6 +353,15 @@ export class CorreiosClient {
     return servicos[codigo] || `Serviço ${codigo}`;
   }
 
+  async verificarConexao(): Promise<{ conectado: boolean; mensagem: string }> {
+    try {
+      await this.obterToken();
+      return { conectado: true, mensagem: 'Conexão com a API dos Correios OK' };
+    } catch (error: any) {
+      return { conectado: false, mensagem: error.message || 'Falha na conexão' };
+    }
+  }
+
   validarConfiguracao(): boolean {
     if (!this.config.contrato) {
       throw new Error('Contrato não configurado');
