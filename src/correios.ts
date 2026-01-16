@@ -15,7 +15,7 @@ export class CorreiosClient {
   private baseUrl: string;
   private tokenUrl: string;
   private token: string | null = null;
-  private tokenExpiraEm: Date | null = null;
+  private tokenObtidoEm: number = 0;
   private contratoDoToken: string | null = null;
   private drDoToken: number | null = null;
 
@@ -75,10 +75,8 @@ export class CorreiosClient {
   }
 
   private isTokenExpirado(): boolean {
-    if (!this.tokenExpiraEm) return true;
-    const agora = new Date();
-    const cincoMinutos = 5 * 60 * 1000;
-    return this.tokenExpiraEm.getTime() - agora.getTime() < cincoMinutos;
+    const cinquentaMinutos = 50 * 60 * 1000;
+    return Date.now() - this.tokenObtidoEm > cinquentaMinutos;
   }
 
   async obterToken(): Promise<string> {
@@ -132,7 +130,7 @@ export class CorreiosClient {
 
       if (response.data.token) {
         this.token = response.data.token;
-        this.tokenExpiraEm = new Date(response.data.expiraEm);
+        this.tokenObtidoEm = Date.now();
 
         if (response.data.cartaoPostagem) {
           this.contratoDoToken = response.data.cartaoPostagem.contrato || this.config.contrato;
