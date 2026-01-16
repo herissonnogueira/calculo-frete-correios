@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { CorreiosClient } from './correios';
+import { consultarCep } from './viacep';
 
 dotenv.config();
 
@@ -35,6 +36,14 @@ async function main() {
     console.log(`Status: ${status.conectado ? '✓' : '✗'} ${status.mensagem}`);
     console.log('');
 
+    console.log('Consultando CEP 01310100...');
+    const endereco = await consultarCep('01310100');
+    if (endereco) {
+      console.log(`  ${endereco.logradouro}, ${endereco.bairro}`);
+      console.log(`  ${endereco.localidade} - ${endereco.uf}`);
+    }
+    console.log('');
+
     console.log('Calculando frete...');
     console.log(`CEP origem: ${cepOrigem}`);
     console.log(`CEP destino: 01310100`);
@@ -68,5 +77,6 @@ if (require.main === module) {
 }
 
 export { CorreiosClient } from './correios';
+export { consultarCep } from './viacep';
 export * from './types';
 
