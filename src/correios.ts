@@ -199,6 +199,7 @@ export class CorreiosClient {
           comprimento: Math.round(comprimento).toString(),
           psObjeto: Math.round(peso * 1000).toString(),
           coProduto: codigoServico,
+          ...(params.valorDeclarado ? { vlDeclarado: params.valorDeclarado.toString() } : {}),
         })),
       };
 
