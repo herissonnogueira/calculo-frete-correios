@@ -22,8 +22,9 @@ export class CorreiosClient {
   constructor(config: CorreiosConfig) {
     this.config = config;
 
-    this.baseUrl = 'https://api.correios.com.br';
-    this.tokenUrl = 'https://api.correios.com.br/token';
+    const isHomologacao = config.ambiente === 'homologacao';
+    this.baseUrl = isHomologacao ? 'https://apihom.correios.com.br' : 'https://api.correios.com.br';
+    this.tokenUrl = isHomologacao ? 'https://apihom.correios.com.br/token' : 'https://api.correios.com.br/token';
     this.apiClient = axios.create({
       baseURL: this.baseUrl,
       headers: {
