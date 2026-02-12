@@ -1,10 +1,10 @@
 {
-  "name": "correios-api",
+  "name": "calculo-frete-correios",
   "version": "1.0.0",
   "description": "Integração com a API dos Correios para cálculo de frete",
   "repository": {
     "type": "git",
-    "url": "https://github.com/herissonnogueira/correios-api.git"
+    "url": "https://github.com/herissonnogueira/calculo-frete-correios.git"
   },
   "main": "dist/index.js",
   "scripts": {
@@ -16,8 +16,12 @@
   "keywords": [
     "correios",
     "frete",
+    "calculo-frete",
     "shipping",
-    "api"
+    "api-correios",
+    "ecommerce",
+    "nodejs",
+    "typescript"
   ],
   "author": "Herisson Nogueira",
   "license": "MIT",
