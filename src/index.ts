@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import { CorreiosClient } from './correios';
 import { consultarCep } from './viacep';
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 async function main() {
   try {
