@@ -75,6 +75,14 @@ export class CorreiosClient {
     );
   }
 
+  private getDataAtual(): string {
+    const hoje = new Date();
+    const dia = String(hoje.getDate()).padStart(2, '0');
+    const mes = String(hoje.getMonth() + 1).padStart(2, '0');
+    const ano = hoje.getFullYear();
+    return `${dia}-${mes}-${ano}`;
+  }
+
   private isTokenExpirado(): boolean {
     const cinquentaMinutos = 50 * 60 * 1000;
     return Date.now() - this.tokenObtidoEm > cinquentaMinutos;
@@ -192,7 +200,7 @@ export class CorreiosClient {
           nuDR: dr,
           nuRequisicao: '1',
           tpObjeto: params.tipoObjeto || '2',
-          dtEvento: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
+          dtEvento: this.getDataAtual(),
           altura: Math.round(altura).toString(),
           largura: Math.round(largura).toString(),
           diametro: params.diametro ? Math.round(params.diametro).toString() : '0',
@@ -210,7 +218,7 @@ export class CorreiosClient {
           cepDestino: cepDestino,
           coProduto: codigoServico,
           nuRequisicao: '1',
-          dtEvento: new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
+          dtEvento: this.getDataAtual(),
         })),
       };
 
