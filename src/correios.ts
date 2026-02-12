@@ -243,43 +243,13 @@ export class CorreiosClient {
   }
 
   private async obterPreco(requestData: any): Promise<any> {
-    const endpoints = [
-      '/preco/v1/nacional',
-      '/preco/v1',
-      '/api/preco/v1/nacional',
-    ];
-
-    for (const endpoint of endpoints) {
-      try {
-        const response = await this.apiClient.post(endpoint, requestData);
-        return response.data;
-      } catch (error: any) {
-        if (error.response && error.response.status !== 404) {
-          throw error;
-        }
-      }
-    }
-    throw new Error('Nenhum endpoint de preço encontrado');
+    const response = await this.apiClient.post('/preco/v1/nacional', requestData);
+    return response.data;
   }
 
   private async obterPrazo(requestData: any): Promise<any> {
-    const endpoints = [
-      '/prazo/v1/nacional',
-      '/prazo/v1',
-      '/api/prazo/v1/nacional',
-    ];
-
-    for (const endpoint of endpoints) {
-      try {
-        const response = await this.apiClient.post(endpoint, requestData);
-        return response.data;
-      } catch (error: any) {
-        if (error.response && error.response.status !== 404) {
-          throw error;
-        }
-      }
-    }
-    throw new Error('Nenhum endpoint de prazo encontrado');
+    const response = await this.apiClient.post('/prazo/v1/nacional', requestData);
+    return response.data;
   }
 
   private combinarPrecoPrazo(precoData: any, prazoData: any): CalculoFreteResponse {
