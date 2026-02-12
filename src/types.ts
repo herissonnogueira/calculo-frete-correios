@@ -24,12 +24,16 @@ export interface TokenResponse {
   };
 }
 
+export type TipoObjeto = '1' | '2' | '3'; // 1=Envelope, 2=Pacote, 3=Rolo
+
 export interface CalculoFreteParams {
   cepDestino: string;
   peso?: number;
   comprimento?: number;
   largura?: number;
   altura?: number;
+  diametro?: number;
+  tipoObjeto?: TipoObjeto;
   valorDeclarado?: number;
   servicos?: string[];
 }
