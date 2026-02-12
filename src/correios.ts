@@ -1,5 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
-import { CorreiosConfig, CalculoFreteParams, CalculoFreteResponse, ServicoFrete, TokenResponse } from './types';
+import { CorreiosConfig, CalculoFreteParams, CalculoFreteResponse, ServicoFrete, TokenResponse, PrecoRequest, PrazoRequest, PrecoResponse, PrazoResponse, PrecoItem, PrazoItem } from './types';
 
 const DIMENSOES_MINIMAS = {
   peso: 0.3,
@@ -101,7 +101,7 @@ export class CorreiosClient {
         `${this.config.usuario}:${this.config.codigoAcesso}`
       ).toString('base64');
 
-      const requestData: any = {
+      const requestData: { numero: string; contrato: string; dr?: number } = {
         numero: this.config.cartaoPostagem,
         contrato: this.config.contrato,
       };
@@ -242,50 +242,47 @@ export class CorreiosClient {
     }
   }
 
-  private async obterPreco(requestData: any): Promise<any> {
-    const response = await this.apiClient.post('/preco/v1/nacional', requestData);
+  private async obterPreco(requestData: PrecoRequest): Promise<PrecoResponse> {
+    const response = await this.apiClient.post<PrecoResponse>('/preco/v1/nacional', requestData);
     return response.data;
   }
 
-  private async obterPrazo(requestData: any): Promise<any> {
-    const response = await this.apiClient.post('/prazo/v1/nacional', requestData);
+  private async obterPrazo(requestData: PrazoRequest): Promise<PrazoResponse> {
+    const response = await this.apiClient.post<PrazoResponse>('/prazo/v1/nacional', requestData);
     return response.data;
   }
 
-  private combinarPrecoPrazo(precoData: any, prazoData: any): CalculoFreteResponse {
+  private combinarPrecoPrazo(precoData: PrecoResponse, prazoData: PrazoResponse): CalculoFreteResponse {
     const servicos: ServicoFrete[] = [];
-    const precos = precoData?.objetos || precoData || [];
-    const prazos = prazoData?.objetos || prazoData || [];
+    const precos = Array.isArray(precoData) ? precoData : precoData?.objetos || [];
+    const prazos = Array.isArray(prazoData) ? prazoData : prazoData?.objetos || [];
 
-    const prazoMap = new Map();
-    if (Array.isArray(prazos)) {
-      prazos.forEach((prazo: any) => {
-        const codigo = prazo.coProduto || prazo.codigo;
-        if (codigo) {
-          prazoMap.set(codigo, prazo);
-        }
+    const prazoMap = new Map<string, PrazoItem>();
+    prazos.forEach((prazo) => {
+      const codigo = prazo.coProduto || prazo.codigo;
+      if (codigo) {
+        prazoMap.set(codigo, prazo);
+      }
+    });
+
+    precos.forEach((preco) => {
+      const codigo = preco.coProduto || preco.codigo;
+      const prazo = prazoMap.get(codigo || '');
+
+      const valor = preco.pcFinal || preco.valor || '0';
+      const valorNum = parseFloat(valor.toString().replace(',', '.')) || 0;
+
+      servicos.push({
+        codigo: codigo || 'N/A',
+        nome: this.getNomeServico(codigo || ''),
+        prazo: prazo?.prazoEntrega || prazo?.prazo || 0,
+        valor: valorNum,
+        entregaDomiciliar: true,
+        entregaSabado: false,
+        erro: preco.txErro || prazo?.txErro,
+        msgErro: preco.txErro || prazo?.txErro,
       });
-    }
-    if (Array.isArray(precos)) {
-      precos.forEach((preco: any) => {
-        const codigo = preco.coProduto || preco.codigo;
-        const prazo = prazoMap.get(codigo);
-
-        const valor = preco.pcFinal || preco.valor || '0';
-        const valorNum = parseFloat(valor.toString().replace(',', '.')) || 0;
-
-        servicos.push({
-          codigo: codigo || 'N/A',
-          nome: this.getNomeServico(codigo),
-          prazo: prazo?.prazoEntrega || prazo?.prazo || 0,
-          valor: valorNum,
-          entregaDomiciliar: true,
-          entregaSabado: false,
-          erro: preco.txErro || prazo?.txErro,
-          msgErro: preco.txErro || prazo?.txErro,
-        });
-      });
-    }
+    });
 
     return { servicos };
   }

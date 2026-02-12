@@ -56,3 +56,58 @@ export interface CalculoFreteResponse {
   servicos: ServicoFrete[];
   erro?: string;
 }
+
+export interface ParametroProduto {
+  cepOrigem: string;
+  cepDestino: string;
+  nuContrato: string;
+  nuDR: number;
+  nuRequisicao: string;
+  tpObjeto: string;
+  dtEvento: string;
+  altura: string;
+  largura: string;
+  diametro: string;
+  comprimento: string;
+  psObjeto: string;
+  coProduto: string;
+  vlDeclarado?: string;
+}
+
+export interface PrecoRequest {
+  idLote: string;
+  parametrosProduto: ParametroProduto[];
+}
+
+export interface ParametroPrazo {
+  cepOrigem: string;
+  cepDestino: string;
+  coProduto: string;
+  nuRequisicao: string;
+  dtEvento: string;
+}
+
+export interface PrazoRequest {
+  idLote: string;
+  parametrosPrazo: ParametroPrazo[];
+}
+
+export interface PrecoItem {
+  coProduto: string;
+  codigo?: string;
+  pcFinal?: string;
+  valor?: string;
+  txErro?: string;
+}
+
+export interface PrazoItem {
+  coProduto: string;
+  codigo?: string;
+  prazoEntrega?: number;
+  prazo?: number;
+  txErro?: string;
+}
+
+export type PrecoResponse = { objetos?: PrecoItem[] } | PrecoItem[];
+
+export type PrazoResponse = { objetos?: PrazoItem[] } | PrazoItem[];
